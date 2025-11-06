@@ -8,7 +8,7 @@ const headers = {
 let request_key:string|undefined = undefined;
 
 export async function getUserApi(userId: string):Promise<t.User | undefined> {
-  return (await fetch_nun(`https://skeb.jp/api/users/${userId}`,{headers})).text();
+  return (await fetch_nun(`https://skeb.jp/api/users/${userId}`,{headers})).json();
 }
 
 export async function getMoreWorks(userId: string, page: number):Promise<t.Work[]|undefined> {
@@ -46,7 +46,7 @@ async function fetch_nun(url:string,request:RequestInit):Promise<Response> {
     if (res.status === 403 || contentType.includes('text/html')) {
       html = await res.clone().text();
     }
-  } catch (e) {
+  } catch (_e) {
     // ignore parse errors
     html = undefined;
   }

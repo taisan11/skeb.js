@@ -2,9 +2,10 @@
   "name":"@taisan11/skeb.js",
   "version":"0.1.0",
   "description":"A Deno library for Skeb API",
-  exports: {
-    ".": "./mod.ts",
-    "./types": "./types.ts"
+  "license":"MIT",
+  "exports": {
+    ".": "./src/mod.ts",
+    "./types": "./src/types.ts"
   },
   "tasks": {
     "dev": "deno run --watch main.ts"
