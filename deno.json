@@ -1,0 +1,14 @@
+{
+  "name":"@taisan11/skeb.js",
+  "version":"0.1.0",
+  "description":"A Deno library for Skeb API",
+  exports: {
+    ".": "./mod.ts",
+    "./types": "./types.ts"
+  },
+  "tasks": {
+    "dev": "deno run --watch main.ts"
+  },
+  "imports": {
+  }
+}
