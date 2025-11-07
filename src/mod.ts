@@ -1,32 +1,30 @@
 import type * as t from "./types.ts"
 
+let request_key:string|undefined = undefined;
 const headers = {
   referer:"https://skeb.jp",
-  authorization:"Bearer null"
+  authorization:"Bearer null",
 }
-
-let request_key:string|undefined = undefined;
 
 export async function getUserApi(userId: string):Promise<t.User | undefined> {
   return (await fetch_nun(`https://skeb.jp/api/users/${userId}`,{headers})).json();
 }
 
 export async function getMoreWorks(userId: string, page: number):Promise<t.Work[]|undefined> {
-  return (await fetch(`https://skeb.jp/api/users/${userId}/works?role=creator&sort=date&offset=${page*30-30}`)).json();
+  return (await fetch_nun(`https://skeb.jp/api/users/${userId}/works?role=creator&sort=date&offset=${page*30-30}`,{headers})).json();
 }
 
-export async function getWorks(path:string):Promise<t.Work | undefined> {
+export async function getWork(path:string):Promise<t.Work | undefined> {
   const m = path.match(/^\/@([^/]+)\/works(\/.*)?$/);
   if (m) {
     const user = m[1];
     const rest = m[2] || '';
-    return (await fetch(`https://skeb.jp/api/users/${user}/works${rest}`)).json();
+    return (await fetch_nun(`https://skeb.jp/api/users/${user}/works${rest}`,{headers})).json();
   }
 }
 
 function getrequest_key(html:string):string|undefined {
   const m = html.match(/request_key=([^;'"\\\s]+)/);
-  console.log(m||"hoi")
   return m ? m[1] : undefined;
 }
 
@@ -37,23 +35,15 @@ async function fetch_nun(url:string,request:RequestInit):Promise<Response> {
       'cookie': `request_key=${request_key}`
     };
   }
-  const res = await fetch(url,request);
 
-  // Try to extract request_key from the HTML body (use clone so original response stays readable)
-  let html: string|undefined;
-  try {
-    const contentType = res.headers.get?.('content-type') || '';
-    if (res.status === 403 || contentType.includes('text/html')) {
-      html = await res.clone().text();
-    }
-  } catch (_e) {
-    // ignore parse errors
-    html = undefined;
-  }
+  const res = await fetch(url, request);
 
-  const foundKey = html ? getrequest_key(html) : undefined;
-  if (foundKey && !request_key) {
-    request_key = foundKey;
+  let foundKey: string|undefined;
+  const ct = res.headers.get?.('content-type') || '';
+  if (res.status === 403 || ct.includes('text/html')) {
+    const html = await res.clone().text();
+    foundKey = getrequest_key(html);
+    if (foundKey && !request_key) request_key = foundKey;
   }
 
   if ((res.status === 403 || foundKey) && request_key) {
@@ -61,10 +51,8 @@ async function fetch_nun(url:string,request:RequestInit):Promise<Response> {
       ...request.headers,
       'cookie': `request_key=${request_key}`
     };
-    console.log(request.headers)
-    return await fetch(url,request);
+    return fetch(url, request);
   }
 
-  console.log(request_key)
   return res;
 }

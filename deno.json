@@ -1,6 +1,6 @@
 {
   "name":"@taisan11/skebjs",
-  "version":"0.1.0",
+  "version":"0.2.0",
   "description":"A Deno library for Skeb API",
   "license":"MIT",
   "exports": {

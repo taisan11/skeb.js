@@ -1,4 +1,6 @@
-type genre = string | "art" | "correction" | "comic"|"video";
+type genre = string | "art" | "correction" | "comic"|"video"|"novel"|"voice"|"music";
+type extension = string | "pdf" | "txt" |"wav"|"png"|"gif"|"mp4"|"m4a"|"wav"|"mp3";
+type transcoder = string | "image" | "text"|"audio"|"video";
 
 export interface User {
   id: number;
@@ -101,7 +103,7 @@ interface miniWork {
   };
   body?: string;
   word_count?: number;
-  transcoder?: string | "image";
+  transcoder?: transcoder;
   creator_acceptable_same_genre?: boolean;
   vtt_url?: string;
   private: boolean;
@@ -148,7 +150,7 @@ export interface Work {
   tag_list: string[];
   anonymous: boolean;
   genre: genre;
-  extension: string;
+  extension: extension;
   duration: number | null;
   vtt_url: string | null;
   movie: boolean;
@@ -166,14 +168,14 @@ export interface Work {
   previews: {
     id: number;
     information: {
-      width: number;
-      height: number;
+      width: number|null;
+      height: number|null;
       byte_size: number;
       duration: number | null;
       software: string | null;
-      extension: string;
+      extension: extension;
       is_movie: boolean;
-      transcoder: string | "image";
+      transcoder: transcoder;
     };
     url: string;
     poster_url: string | null;
